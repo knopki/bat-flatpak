@@ -29,6 +29,8 @@ jobs:
           command: |
             docker exec -it fb bash -c '
               if [ $CIRCLE_BRANCH == "master" ]; then
+                git config --global user.email "korolev.srg@gmail.com"
+                git config --global user.name "Sergey Korolev"
                 git clone $CIRCLE_REPOSITORY_URL /root/repo
                 cd /root/repo
                 git checkout gh-pages || git checkout --orphan gh-pages
