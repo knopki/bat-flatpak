@@ -33,11 +33,12 @@ jobs:
                 git config --global user.name "Sergey Korolev"
                 git clone $CIRCLE_REPOSITORY_URL /root/repo
                 cd /root/repo
-                git checkout gh-pages || git checkout --orphan gh-pages
+                git checkout gh-pages || git checkout --orphan gh-pages && git rm -rf
               else
                 [[ -d /root/repo/refs ]] || ostree init --mode=archive-z2 --repo=/root/repo
                 [[ -d /root/repo/refs/remotes ]] || \
                   mkdir -p /root/repo/refs/remotes && touch /root/repo/refs/remotes/.gitkeep
+                echo "gpg-verify-summary=false" >> /root/repo/config
               fi'
 
       - restore_cache:
@@ -75,11 +76,10 @@ jobs:
           command: |
             docker exec -it fb bash -c '
             if [ $CIRCLE_BRANCH == "master" ]; then
+              cd /root/repo
               flatpak build-update-repo --prune --prune-depth=20 \
                 --generate-static-deltas /root/repo
-              echo "gpg-verify-summary=false" >> /root/repo/config
               rm -rf /root/repo/.lock
-              cd /root/repo
               git add -A
               git commit --allow-empty \
                 -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}"
