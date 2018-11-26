@@ -32,11 +32,12 @@ jobs:
                 git clone $CIRCLE_REPOSITORY_URL /root/repo
                 cd /root/repo
                 git checkout gh-pages || git checkout --orphan gh-pages && (git rm -rf . || true)
+                [[ -d /root/repo/refs ]] || ostree init --mode=archive-z2 --repo=/root/repo
+                echo "gpg-verify-summary=false" >> /root/repo/config
               else
                 [[ -d /root/repo/refs ]] || ostree init --mode=archive-z2 --repo=/root/repo
                 [[ -d /root/repo/refs/remotes ]] || \
                   mkdir -p /root/repo/refs/remotes && touch /root/repo/refs/remotes/.gitkeep
-                echo "gpg-verify-summary=false" >> /root/repo/config
               fi'
 
 
